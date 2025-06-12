@@ -1,0 +1,42 @@
+/*
+Author: Wanda Azhar
+Location: Twin Falls, ID. USA
+Contact: wandaazhar@gmail.com
+Description: A responsive web admin dashboard for warungindomichigan.com built with React, TypeScript, Sass, and Firebase. Manage products, transactions, authentications, and more...
+*/
+
+@mixin smallPhone {
+  @media screen and (max-width: (375px)) {
+    @content;
+  }
+}
+
+@mixin phone {
+  @media screen and (max-width: (480px)) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and (max-width: (768px)) {
+    @content;
+  }
+}
+
+@mixin miniDesktop {
+  @media screen and (max-width: (1024px)) {
+    @content;
+  }
+}
+
+@mixin standartDesktop {
+  @media screen and (max-width: (1200px)) {
+    @content;
+  }
+}
+
+@mixin largeDesktop {
+  @media screen and (max-width: (1400px)) {
+    @content;
+  }
+}
