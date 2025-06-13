@@ -16,3 +16,12 @@ export interface Product {
   createdAt: string; // or Date
   updatedAt: string; // or Date
 }
+
+export interface ProductFormData {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stockQuantity: number;
+  // Add other fields as needed from your Product interface
+}
