@@ -1,0 +1,22 @@
+@use '../../styles/responsive' as r;
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background-primary);
+}
+
+.mainContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pageContent {
+  padding: 2rem;
+  flex-grow: 1;
+
+  @include r.tablet {
+    padding: 1rem;
+  }
+}
