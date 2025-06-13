@@ -1,0 +1,131 @@
+@use '../../styles/responsive' as r;
+
+// We do not need to import the 'variable' file here because we are using
+// the global CSS variables defined in globals.scss for theming.
+
+.loginPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--background-primary);
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.loginForm {
+  width: 100%;
+  max-width: 420px;
+  min-width: 320px;
+  background-color: var(--background-secondary); // CORRECT: Using CSS variable
+  padding: 3rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-color);
+  color: var(--text-primary);
+  text-align: left; // Fixes the centered text issue
+
+  @include r.phone {
+    padding: 2.5rem 1.5rem;
+  }
+}
+
+.formHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 1.75rem;
+    margin: 0;
+    color: var(--text-primary); // CORRECT
+  }
+
+  p {
+    color: var(--text-secondary); // CORRECT
+    font-size: 1rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.errorMessage {
+  background-color: #e53935; // A specific color for errors is fine
+  color: white;
+  padding: 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary); // CORRECT
+  }
+
+  input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--border-color); // CORRECT
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    color: var(--text-primary); // CORRECT
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: var(--selection-bg); // CORRECT
+    }
+  }
+}
+
+.passwordWrapper {
+  position: relative;
+
+  .passwordToggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary); // CORRECT
+    font-size: 1.1rem;
+  }
+}
+
+.loginButton {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--background-card); // CORRECT
+  color: var(--text-primary); // CORRECT
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--border-color); // CORRECT
+  }
+}
+
+.footer {
+  position: absolute;
+  bottom: 1rem;
+  color: var(--text-secondary); // CORRECT
+  font-size: 0.9rem;
+}
