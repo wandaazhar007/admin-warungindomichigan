@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react';
-import { getProducts } from '../../services/productService';
-import type { Product } from '../../types/product';
+import { getProducts, createProduct } from '../../services/productService';
+import type { Product, ProductFormData } from '../../types/product';
+import { getIdToken } from '../../services/authService';
 import styles from './ProductPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
-// We will use this later for the Add Product form
-// import ProductForm from '../../components/ProductForm'; 
+import ProductForm from '../../components/productForm/ProductForm';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  // We'll add state for the form visibility later
-  // const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
+  const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,27 +31,96 @@ const ProductsPage = () => {
     fetchProducts();
   }, []);
 
+  const handleAddProductClick = () => {
+    setIsFormVisible(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormVisible(false);
+  };
+
+  // const handleSubmitForm = async (formData: ProductFormData, imageFile?: File) => {
+  //   setIsSubmitting(true);
+  //   setError(null);
+
+  //   const token = await getIdToken();
+  //   if (!token) {
+  //     alert("Authentication error. Please log in again.");
+  //     setIsSubmitting(false);
+  //     return;
+  //   }
+
+  //   console.log("Image file to be uploaded:", imageFile);
+
+  //   try {
+  //     const newProductData = { ...formData };
+  //     const newProduct = await createProduct(newProductData, token);
+  //     setProducts(prev => [newProduct, ...prev]);
+  //     handleCloseForm();
+  //   } catch (error) {
+  //     console.error("Failed to create product", error);
+  //     setError("Failed to create product. Please check the console for details.");
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+  const handleSubmitForm = async (formData: ProductFormData, imageFile?: File) => {
+    setIsSubmitting(true);
+    setError(null); // Clear previous errors
+
+    const token = await getIdToken();
+    if (!token) {
+      setError("Authentication error. Please log in again."); // <-- USE SETERROR
+      setIsSubmitting(false);
+      return;
+    }
+
+    console.log("Image file to be uploaded:", imageFile);
+
+    try {
+      const newProductData = { ...formData };
+      const newProduct = await createProduct(newProductData, token);
+      setProducts(prev => [newProduct, ...prev]);
+      handleCloseForm();
+    } catch (error) {
+      console.error("Failed to create product", error);
+      setError("Failed to create product. Please try again."); // <-- USE SETERROR
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleEdit = (id: string) => {
     console.log("Edit product:", id);
-    // Edit logic will go here
   };
 
   const handleDelete = (id: string) => {
     console.log("Delete product:", id);
-    // Delete logic will go here
   };
 
   return (
     <div className={styles.productsPage}>
+      {/* This is where the prop is passed. It must match the definition in ProductForm.tsx */}
+      {isFormVisible && (
+        <ProductForm
+          onClose={handleCloseForm}
+          onSubmit={handleSubmitForm}
+          isLoading={isSubmitting}
+          error={error} // <-- PASS THE ERROR STATE AS A PROP
+        />
+      )}
+
       <header className={styles.header}>
         <h1>All Menus</h1>
         <div className={styles.headerActions}>
           <input type="text" placeholder="Search here..." className={styles.searchInput} />
-          <button className={styles.addButton}>Add Product +</button>
+          <button onClick={handleAddProductClick} className={styles.addButton}>Add Product +</button>
         </div>
       </header>
 
       <div className={styles.tableContainer}>
+        {/* ... The rest of your table JSX remains the same ... */}
         {loading && <p>Loading products...</p>}
         {error && <p className={styles.errorText}>{error}</p>}
         {!loading && !error && (
@@ -73,7 +141,7 @@ const ProductsPage = () => {
                       <div className={styles.productImagePlaceholder}></div>
                       <span>
                         {product.name}
-                        <small>{product.category} Roll</small> {/* Example subtitle */}
+                        <small>{product.category}</small>
                       </span>
                     </div>
                   </td>
@@ -95,7 +163,6 @@ const ProductsPage = () => {
           </table>
         )}
       </div>
-      {/* We will add pagination here later */}
     </div>
   );
 };

@@ -1,86 +1,119 @@
 import { useState } from 'react';
 import type { ProductFormData } from '../../types/product';
-import styles from './ProductForm.module.scss'; // We will create this file next
+import styles from './ProductForm.module.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 interface ProductFormProps {
-  onSubmit: (formData: ProductFormData) => void;
-  onCancel: () => void;
+  onSubmit: (formData: ProductFormData, imageFile?: File) => void;
+  onClose: () => void;
   isLoading: boolean;
+  error?: string | null; // <-- ADD THIS PROP to accept errors from the parent
 }
 
-const ProductForm = ({ onSubmit, onCancel, isLoading }: ProductFormProps) => {
-  const [formData, setFormData] = useState<ProductFormData>({
+const ProductForm = ({ onSubmit, onClose, isLoading, error }: ProductFormProps) => {
+  const [formData, setFormData] = useState<Omit<ProductFormData, 'price'>>({
     name: '',
+    slug: '',
     description: '',
-    price: 0,
-    category: 'Foods', // Default category
+    category: 'Foods',
     stockQuantity: 0,
   });
+  const [price, setPrice] = useState('');
+  const [imageFile, setImageFile] = useState<File | undefined>();
+  const [validationError, setValidationError] = useState(''); // For local form errors
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setValidationError(''); // Clear error on change
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      // Convert to number if the input type is number
-      [name]: e.target.type === 'number' ? parseFloat(value) || 0 : value,
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValidationError('');
+    setPrice(e.target.value);
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Use local validation error state
     if (!formData.name) {
-      alert('Product name is required.');
+      setValidationError('Product name is required.');
       return;
     }
-    // Remember price should be in cents
-    onSubmit({ ...formData, price: formData.price * 100 });
+    const numericPrice = parseFloat(price);
+    if (isNaN(numericPrice)) {
+      setValidationError('Please enter a valid price.');
+      return;
+    }
+    onSubmit({ ...formData, price: numericPrice * 100 }, imageFile);
   };
 
   return (
     <div className={styles.formOverlay}>
-      <form className={styles.productForm} onSubmit={handleSubmit}>
-        <h2>Create New Product</h2>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="name">Product Name</label>
-          <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="description">Description</label>
-          <textarea id="description" name="description" value={formData.description} onChange={handleChange} />
-        </div>
-
-        <div className={styles.formRow}>
-          <div className={styles.formGroup}>
-            <label htmlFor="price">Price ($)</label>
-            <input type="number" id="price" name="price" value={formData.price} onChange={handleChange} step="0.01" min="0" />
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="stockQuantity">Stock Quantity</label>
-            <input type="number" id="stockQuantity" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} min="0" />
-          </div>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="category">Category</label>
-          <select id="category" name="category" value={formData.category} onChange={handleChange}>
-            <option value="Foods">Foods</option>
-            <option value="Beverages">Beverages</option>
-            <option value="Seasonings">Seasonings</option>
-            <option value="Others">Others</option>
-          </select>
-        </div>
-
-        <div className={styles.formActions}>
-          <button type="button" onClick={onCancel} className={styles.cancelButton} disabled={isLoading}>
-            Cancel
+      <div className={styles.formContainer}>
+        <header className={styles.formHeader}>
+          <h2>Add Product</h2>
+          <button onClick={onClose} className={styles.closeButton} disabled={isLoading}>
+            <FontAwesomeIcon icon={faXmark} />
+            <span>Close</span>
           </button>
-          <button type="submit" className={styles.submitButton} disabled={isLoading}>
-            {isLoading ? 'Creating...' : 'Create Product'}
-          </button>
-        </div>
-      </form>
+        </header>
+        <form onSubmit={handleSubmit}>
+          <div className={styles.formGrid}>
+            {/* Display server error OR local validation error */}
+            {(error || validationError) && (
+              <p className={styles.errorMessage}>{error || validationError}</p>
+            )}
+
+            {/* ... The rest of your form inputs ... */}
+            <div className={styles.formGroup}>
+              <label htmlFor="name">Product Name</label>
+              <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required disabled={isLoading} />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="description">Description</label>
+              <textarea id="description" name="description" value={formData.description} onChange={handleChange} disabled={isLoading} />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="slug">Slug</label>
+              <input type="text" id="slug" name="slug" value={formData.slug} onChange={handleChange} disabled={isLoading} />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="image">Image Product</label>
+              <input type="file" id="image" name="image" onChange={handleFileChange} accept="image/*" disabled={isLoading} />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="price">Price ($)</label>
+              <input type="number" id="price" name="price" value={price} onChange={handlePriceChange} step="0.01" min="0" disabled={isLoading} />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="category">Category</label>
+              <select id="category" name="category" value={formData.category} onChange={handleChange} disabled={isLoading}>
+                <option value="Foods">Foods</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Seasonings">Seasonings</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="stockQuantity">Stock Quantity</label>
+              <input type="number" id="stockQuantity" name="stockQuantity" value={String(formData.stockQuantity)} onChange={(e) => setFormData({ ...formData, stockQuantity: parseInt(e.target.value, 10) || 0 })} min="0" disabled={isLoading} />
+            </div>
+          </div>
+          <div className={styles.formActions}>
+            <button type="submit" className={styles.saveButton} disabled={isLoading}>
+              {isLoading ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

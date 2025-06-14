@@ -19,9 +19,10 @@ export interface Product {
 
 export interface ProductFormData {
   name: string;
+  slug: string; // <-- ADD THIS LINE
   description: string;
   price: number;
   category: string;
   stockQuantity: number;
-  // Add other fields as needed from your Product interface
+  imageUrl?: string;
 }
