@@ -1,5 +1,9 @@
+// @use '../../styles/responsive' as r;
+@use '../../styles/variable' as v;
+@use '../../styles/responsive' as r;
+
 .navbar {
-  height: 70px;
+  height: 5rem;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--background-secondary);
   display: flex;
@@ -32,4 +36,35 @@
   gap: 0.75rem;
   color: var(--text-primary);
   font-weight: 500;
+}
+
+.toogleSidebar {
+  display: none;
+
+  @include r.tablet {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--background-secondary);
+    border-radius: 0.25rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--background-hover);
+    }
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: var(--text-secondary);
+    }
+
+    &:hover svg {
+      color: var(--text-primary);
+    }
+  }
+
 }
