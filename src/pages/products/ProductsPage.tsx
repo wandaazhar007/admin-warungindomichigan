@@ -6,6 +6,7 @@ import styles from './ProductPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import ProductForm from '../../components/productForm/ProductForm';
+import { uploadImage } from '../../services/storageService';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -67,25 +68,41 @@ const ProductsPage = () => {
 
   const handleSubmitForm = async (formData: ProductFormData, imageFile?: File) => {
     setIsSubmitting(true);
-    setError(null); // Clear previous errors
+    setError(null);
 
     const token = await getIdToken();
     if (!token) {
-      setError("Authentication error. Please log in again."); // <-- USE SETERROR
+      setError("Authentication error. Please log in again.");
       setIsSubmitting(false);
       return;
     }
 
-    console.log("Image file to be uploaded:", imageFile);
-
     try {
-      const newProductData = { ...formData };
-      const newProduct = await createProduct(newProductData, token);
+      let imageUrl = ''; // Default to an empty string
+
+      // 1. If an image file exists, upload it first
+      if (imageFile) {
+        console.log("Uploading image...");
+        imageUrl = await uploadImage(imageFile);
+        console.log("Image uploaded successfully:", imageUrl);
+      }
+
+      // 2. Prepare the final product data with the new image URL
+      const finalProductData = {
+        ...formData,
+        imageUrl: imageUrl, // Add the URL to the data object
+      };
+
+      // 3. Create the product document in Firestore
+      const newProduct = await createProduct(finalProductData, token);
+
+      // 4. Update the UI
       setProducts(prev => [newProduct, ...prev]);
       handleCloseForm();
+
     } catch (error) {
       console.error("Failed to create product", error);
-      setError("Failed to create product. Please try again."); // <-- USE SETERROR
+      setError("Failed to create product. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
