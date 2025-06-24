@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { ProductFormData } from '../../types/product';
+import { useState, useEffect } from 'react';
+import type { Product, ProductFormData } from '../../types/product';
 import styles from './ProductForm.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -8,10 +8,11 @@ interface ProductFormProps {
   onSubmit: (formData: ProductFormData, imageFile?: File) => void;
   onClose: () => void;
   isLoading: boolean;
-  error?: string | null; // <-- ADD THIS PROP to accept errors from the parent
+  error?: string | null;
+  initialData?: Product | null;
 }
 
-const ProductForm = ({ onSubmit, onClose, isLoading, error }: ProductFormProps) => {
+const ProductForm = ({ onSubmit, onClose, isLoading, error, initialData }: ProductFormProps) => {
   const [formData, setFormData] = useState<Omit<ProductFormData, 'price'>>({
     name: '',
     slug: '',
@@ -21,10 +22,24 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error }: ProductFormProps) 
   });
   const [price, setPrice] = useState('');
   const [imageFile, setImageFile] = useState<File | undefined>();
-  const [validationError, setValidationError] = useState(''); // For local form errors
+  const [validationError, setValidationError] = useState('');
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name,
+        slug: initialData.slug || '',
+        description: initialData.description,
+        category: initialData.category,
+        stockQuantity: initialData.stockQuantity,
+        imageUrl: initialData.imageUrl
+      });
+      setPrice((initialData.price / 100).toString());
+    }
+  }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setValidationError(''); // Clear error on change
+    setValidationError('');
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -42,7 +57,6 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error }: ProductFormProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Use local validation error state
     if (!formData.name) {
       setValidationError('Product name is required.');
       return;
@@ -59,20 +73,18 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error }: ProductFormProps) 
     <div className={styles.formOverlay}>
       <div className={styles.formContainer}>
         <header className={styles.formHeader}>
-          <h2>Add Product</h2>
+          <h2>{initialData ? 'Edit Product' : 'Add Product'}</h2>
           <button onClick={onClose} className={styles.closeButton} disabled={isLoading}>
             <FontAwesomeIcon icon={faXmark} />
             <span>Close</span>
           </button>
         </header>
+        {/* The form JSX was missing, this restores it. */}
         <form onSubmit={handleSubmit}>
           <div className={styles.formGrid}>
-            {/* Display server error OR local validation error */}
             {(error || validationError) && (
               <p className={styles.errorMessage}>{error || validationError}</p>
             )}
-
-            {/* ... The rest of your form inputs ... */}
             <div className={styles.formGroup}>
               <label htmlFor="name">Product Name</label>
               <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required disabled={isLoading} />
@@ -109,7 +121,7 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error }: ProductFormProps) 
           </div>
           <div className={styles.formActions}>
             <button type="submit" className={styles.saveButton} disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save'}
+              {isLoading ? 'Saving...' : (initialData ? 'Save Changes' : 'Save')}
             </button>
           </div>
         </form>

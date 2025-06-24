@@ -37,3 +37,28 @@ export const createProduct = async (productData: ProductFormData, token: string)
     throw error;
   }
 };
+
+
+/**
+ * Updates an existing product.
+ * @param productId The ID of the product to update.
+ * @param productData The new data for the product.
+ * @param token The user's auth token.
+ * @returns A promise that resolves when the update is complete.
+ */
+export const updateProduct = async (
+  productId: string,
+  productData: ProductFormData,
+  token: string
+): Promise<void> => {
+  try {
+    await axios.put(`${API_URL}/${productId}`, productData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  } catch (error) {
+    console.error(`Failed to update product ${productId}:`, error);
+    throw error;
+  }
+};
