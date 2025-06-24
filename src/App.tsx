@@ -4,6 +4,7 @@ import DashboardPage from './pages/dashboard/DashboardPage';
 import LoginPage from './pages/login/LoginPage';
 import ProductsPage from './pages/products/ProductsPage';
 import { useAuthStatus } from './hooks/useAuthStatus';
+import { Toaster } from 'react-hot-toast';
 // import './App.css';
 
 // This component will wrap all our protected pages
@@ -23,20 +24,34 @@ const ProtectedRoutes = () => {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* The Login Page is a public route */}
-        <Route path="/login" element={<LoginPage />} />
-
-        {/* All other routes are children of our new ProtectedRoutes component */}
-        <Route path="/" element={<ProtectedRoutes />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="products" element={<ProductsPage />} />
-          {/* Add future protected routes (e.g., customers, orders) here */}
-        </Route>
-
-      </Routes>
-    </Router>
+    <> {/* Use a fragment to wrap the Router and Toaster */}
+      <Toaster // <-- ADD THE TOASTER COMPONENT HERE
+        position="top-right"
+        toastOptions={{
+          success: {
+            style: {
+              background: '#28a745',
+              color: 'white',
+            },
+          },
+          error: {
+            style: {
+              background: '#dc3545',
+              color: 'white',
+            },
+          },
+        }}
+      />
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<ProtectedRoutes />}>
+            <Route index element={<DashboardPage />} />
+            <Route path="products" element={<ProductsPage />} />
+          </Route>
+        </Routes>
+      </Router>
+    </>
   );
 }
 
