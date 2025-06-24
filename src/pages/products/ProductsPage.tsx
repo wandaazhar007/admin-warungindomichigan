@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import ProductForm from '../../components/productForm/ProductForm';
 import { uploadImage } from '../../services/storageService';
+import toast from 'react-hot-toast';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -72,37 +73,26 @@ const ProductsPage = () => {
 
     const token = await getIdToken();
     if (!token) {
-      setError("Authentication error. Please log in again.");
+      toast.error("Authentication error. Please log in again."); // <-- USE TOAST FOR ERROR
       setIsSubmitting(false);
       return;
     }
 
     try {
-      let imageUrl = ''; // Default to an empty string
-
-      // 1. If an image file exists, upload it first
+      let imageUrl = '';
       if (imageFile) {
-        console.log("Uploading image...");
         imageUrl = await uploadImage(imageFile);
-        console.log("Image uploaded successfully:", imageUrl);
       }
-
-      // 2. Prepare the final product data with the new image URL
-      const finalProductData = {
-        ...formData,
-        imageUrl: imageUrl, // Add the URL to the data object
-      };
-
-      // 3. Create the product document in Firestore
+      const finalProductData = { ...formData, imageUrl };
       const newProduct = await createProduct(finalProductData, token);
 
-      // 4. Update the UI
       setProducts(prev => [newProduct, ...prev]);
       handleCloseForm();
+      toast.success('Product created successfully!'); // <-- USE TOAST FOR SUCCESS
 
     } catch (error) {
       console.error("Failed to create product", error);
-      setError("Failed to create product. Please try again.");
+      toast.error("Failed to create product. Please try again."); // <-- USE TOAST FOR ERROR
     } finally {
       setIsSubmitting(false);
     }
