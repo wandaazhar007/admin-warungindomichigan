@@ -109,6 +109,13 @@ Description: A responsive web admin dashboard for warungindomichigan.com built w
   align-items: center;
   gap: 1rem;
 
+  .productImage {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover; // Ensures the image covers the area without stretching
+  }
+
   .productImagePlaceholder {
     width: 40px;
     height: 40px;
