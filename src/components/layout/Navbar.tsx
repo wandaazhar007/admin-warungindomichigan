@@ -1,22 +1,29 @@
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRightFromBracket, faSun, faMoon, faEllipsisVertical, faClose } from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 import styles from './Navbar.module.scss';
-import { useTheme } from '../../context/ThemeContext'; // Import the useTheme hook
-import { useContext } from 'react';
-// import { NavbarContext } from '../../context/NavbarContext';
-import { SidebarContext } from '../../context/SidebarContext';
+import { useTheme } from '../../context/ThemeContext';
+import { logOut } from '../../services/authService'; // Import the logOut function
 
 const Navbar = () => {
+  const navigate = useNavigate(); // Hook for navigation
+  const { theme, toggleTheme } = useTheme();
+
+  // We'll get the user's name from the auth state later
   const userName = "Wanda Azhar";
-  const { theme, toggleTheme } = useTheme(); // Use the hook to get theme state and toggle function
 
-  // const navbarToggle: any = useContext(NavbarContext);
-  // const activeNavbar = navbarToggle.active;
-  // const triggerNavbar = navbarToggle.triggerNavbar;
-
-  const sidebarToggle: any = useContext(SidebarContext);
-  const activeSidebar = sidebarToggle.active;
-  const triggerSidebar = sidebarToggle.triggerSidebar;
+  // Function to handle the logout process
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      // Redirect to login page after successful logout
+      navigate('/login');
+      console.log("User logged out successfully.");
+    } catch (error) {
+      console.error("Failed to log out:", error);
+      // Optionally, show an error message to the user
+    }
+  };
 
   return (
     <nav className={styles.navbar}>
@@ -25,28 +32,15 @@ const Navbar = () => {
       </div>
       <div className={styles.userMenu}>
         <button onClick={toggleTheme} className={styles.iconButton} title="Toggle Theme">
-          {/* Show a different icon based on the current theme */}
           <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
         </button>
         <div className={styles.userInfo}>
           <span>{userName}</span>
         </div>
-        <button className={styles.iconButton} title="Logout">
+        {/* Attach the handleLogout function to the button's onClick event */}
+        <button onClick={handleLogout} className={styles.iconButton} title="Logout">
           <FontAwesomeIcon icon={faRightFromBracket} />
         </button>
-        <div className={styles.toogleSidebar}>
-          {/* {activeNavbar ? (
-            <FontAwesomeIcon icon={faClose} onClick={triggerSidebar} />
-          ) : (
-            <FontAwesomeIcon icon={faEllipsisVertical} onClick={triggerSidebar} />
-          )} */}
-
-          {activeSidebar ? (
-            <FontAwesomeIcon icon={faClose} onClick={triggerSidebar} />
-          ) : (
-            <FontAwesomeIcon icon={faEllipsisVertical} onClick={triggerSidebar} />
-          )}
-        </div>
       </div>
     </nav>
   );

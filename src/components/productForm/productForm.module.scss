@@ -1,26 +1,148 @@
-// ... (keep all existing styles)
+@use '../../styles/responsive' as r;
 
+// Main overlay for the modal
+.formOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+// The main container for the form
+.formContainer {
+  width: 100%;
+  max-width: 800px;
+  background-color: var(--background-card);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+// Form header with title and close button
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+
+  h2 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    margin: 0;
+  }
+}
+
+.closeButton {
+  background-color: var(--background-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover {
+    background-color: #e53935;
+    color: white;
+    border-color: #e53935;
+  }
+}
+
+// The main form element
+form {
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+// The grid layout for the form fields
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+
+  @include r.tablet {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Styling for each group of label + input
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  text-align: left; // <-- ADD THIS LINE to fix the alignment
+  gap: 0.6rem;
+  text-align: left;
 
   label {
-    // ...
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
   }
 
-  // ...
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: var(--selection-bg);
+      box-shadow: 0 0 0 2px rgba(46, 167, 154, 0.3); // Using your teal color
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
 }
 
-// ADD THIS NEW CLASS for styling the error message
-.errorMessage {
-  background-color: #e539351a;
-  color: #e53935;
-  border: 1px solid #e53935;
-  padding: 0.75rem;
-  border-radius: 4px;
-  text-align: center;
-  font-weight: 500;
-  grid-column: 1 / -1; // Makes the error span both columns of the grid
+// Form footer with the save button
+.formActions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.saveButton {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+  border: none;
+  padding: 0.8rem 2.5rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
