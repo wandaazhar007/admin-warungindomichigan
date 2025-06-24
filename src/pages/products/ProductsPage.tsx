@@ -145,7 +145,12 @@ const ProductsPage = () => {
                 <tr key={product.id}>
                   <td>
                     <div className={styles.productNameCell}>
-                      <div className={styles.productImagePlaceholder}></div>
+                      {/* --- THIS IS THE KEY CHANGE --- */}
+                      {product.imageUrl ? (
+                        <img src={product.imageUrl} alt={product.name} className={styles.productImage} />
+                      ) : (
+                        <div className={styles.productImagePlaceholder}></div>
+                      )}
                       <span>
                         {product.name}
                         <small>{product.category}</small>
