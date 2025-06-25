@@ -1,0 +1,22 @@
+@keyframes skeleton-loading {
+  0% {
+    background-color: var(--border-color);
+  }
+
+  100% {
+    background-color: var(--background-card);
+  }
+}
+
+.skeletonRow {
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.skeletonCell {
+  height: 40px;
+  border-radius: 6px;
+  animation: skeleton-loading 1s linear infinite alternate;
+}
