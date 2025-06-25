@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRightFromBracket, faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket, faSun, faMoon, faKey } from '@fortawesome/free-solid-svg-icons';
 import styles from './Navbar.module.scss';
 import { useTheme } from '../../context/ThemeContext';
-import { logOut } from '../../services/authService'; // Import the logOut function
+import { logOut, getIdToken } from '../../services/authService'; // Import the logOut function
 
 const Navbar = () => {
   const navigate = useNavigate(); // Hook for navigation
@@ -11,6 +11,25 @@ const Navbar = () => {
 
   // We'll get the user's name from the auth state later
   const userName = "Wanda Azhar";
+
+  // --- NEW FUNCTION TO GET AND LOG THE TOKEN ---
+  const handleGetToken = async () => {
+    try {
+      const token = await getIdToken();
+      if (token) {
+        // This will now definitely show up in your console
+        console.log("--- Your Test Auth Token (copy this) ---");
+        console.log(token);
+        alert("Token has been printed to the browser console.");
+      } else {
+        alert("Could not get token. Are you logged in?");
+      }
+    } catch (error) {
+      console.error("Error getting token:", error);
+      alert("An error occurred while getting the token. Check the console.");
+    }
+  };
+
 
   // Function to handle the logout process
   const handleLogout = async () => {
@@ -37,6 +56,13 @@ const Navbar = () => {
         <div className={styles.userInfo}>
           <span>{userName}</span>
         </div>
+
+        {/* --- TEMPORARY TOKEN BUTTON --- */}
+        <button onClick={handleGetToken} className={styles.iconButton} title="Get Test Token">
+          <FontAwesomeIcon icon={faKey} />
+        </button>
+
+
         {/* Attach the handleLogout function to the button's onClick event */}
         <button onClick={handleLogout} className={styles.iconButton} title="Logout">
           <FontAwesomeIcon icon={faRightFromBracket} />

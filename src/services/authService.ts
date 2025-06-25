@@ -43,7 +43,10 @@ export const onAuthChange = (callback: (user: User | null) => void) => {
  */
 export const getIdToken = async (): Promise<string | null> => {
   if (auth.currentUser) {
-    return await auth.currentUser.getIdToken();
+    const token = await auth.currentUser.getIdToken();
+    // Temporarily log the token to the console for testing
+    // console.log("Your Test Auth Token:", token);
+    return token;
   }
   return null;
 }
