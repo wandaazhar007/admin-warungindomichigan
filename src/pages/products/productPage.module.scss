@@ -161,3 +161,31 @@ Description: A responsive web admin dashboard for warungindomichigan.com built w
   color: #e53935;
   font-weight: 500;
 }
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.loadMoreButton {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+  border: none;
+  padding: 0.8rem 2.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.endOfListText {
+  color: var(--text-secondary);
+  font-weight: 500;
+}

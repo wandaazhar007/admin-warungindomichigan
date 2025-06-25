@@ -5,20 +5,35 @@ import type { ProductFormData } from '../types/product';
 // The base URL of our backend API
 const API_URL = 'http://localhost:8080/api/products';
 
-interface ApiResponse {
-  message: string;
-  data: Product[];
+// interface ApiResponse {
+//   message: string;
+//   data: Product[];
+// }
+
+// Define the new shape of the API response for getProducts
+interface PaginatedProductsResponse {
+  products: Product[];
+  lastVisible: string | null;
 }
 
-export const getProducts = async (): Promise<Product[]> => {
+interface ApiResponse {
+  message: string;
+  data: PaginatedProductsResponse;
+}
+
+
+/**
+ * Fetches a paginated list of products.
+ * @param lastVisible - The ID of the last visible product to fetch the next page.
+ */
+export const getProducts = async (lastVisible: string | null = null): Promise<PaginatedProductsResponse> => {
   try {
-    const response = await axios.get<ApiResponse>(API_URL);
-    // The actual product array is in response.data.data
+    const params = lastVisible ? { lastVisible } : {};
+    const response = await axios.get<ApiResponse>(API_URL, { params });
     return response.data.data;
   } catch (error) {
     console.error('Failed to fetch products:', error);
-    // Return an empty array or throw the error, depending on how you want to handle it
-    return [];
+    return { products: [], lastVisible: null };
   }
 };
 
@@ -59,6 +74,26 @@ export const updateProduct = async (
     });
   } catch (error) {
     console.error(`Failed to update product ${productId}:`, error);
+    throw error;
+  }
+};
+
+
+/**
+ * Deletes a product from the database.
+ * @param productId The ID of the product to delete.
+ * @param token The user's auth token.
+ * @returns A promise that resolves when the deletion is complete.
+ */
+export const deleteProduct = async (productId: string, token: string): Promise<void> => {
+  try {
+    await axios.delete(`${API_URL}/${productId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  } catch (error) {
+    console.error(`Failed to delete product ${productId}:`, error);
     throw error;
   }
 };
