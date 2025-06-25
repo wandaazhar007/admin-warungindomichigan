@@ -7,90 +7,17 @@ Description: A responsive web admin dashboard for warungindomichigan.com built w
 
 /* src/styles/globals.scss */
 
-// Import your variables
-// @use './variable' as v;
-// @use './responsive' as r;
-
-// /*
-//   Define color variables for both themes.
-//   The 'data-theme' attribute on the body will control which set of variables is active.
-// */
-// :root {
-//   --background-primary: #FAFAFA;
-//   --background-secondary: #F7F7F7;
-//   --background-card: #FFFFFF;
-//   --text-primary: #1A202C; // Dark grey for text
-//   --text-secondary: #718096; // Lighter grey for secondary text
-//   --border-color: #E0E0E0;
-//   --shadow-color: rgba(100, 100, 111, 0.2);
-//   --selection-bg: #{v.$colorBackgroundDark};
-//   --selection-text: #{v.$colorBackgroundLight};
-// }
-
-// [data-theme='dark'] {
-//   --background-primary: #1A202C;
-//   --background-secondary: #2D3748;
-//   --background-card: #4A5568;
-//   --text-primary: #F7FAFC; // Light text for dark mode
-//   --text-secondary: #A0AEC0; // Lighter grey for dark mode
-//   --border-color: #4A5568;
-//   --shadow-color: rgba(0, 0, 0, 0.4);
-//   --selection-bg: #{v.$colorTeal};
-//   --selection-text: #{v.$colorBackgroundDark};
-// }
-
-// // General body styles
-// body {
-//   font-family: 'Inter', sans-serif; // Global font style
-//   background-color: var(--background-primary);
-//   color: var(--text-primary);
-//   transition: background-color 0.3s, color 0.3s;
-//   -webkit-font-smoothing: antialiased;
-//   -moz-osx-font-smoothing: grayscale;
-// }
-
-// // Reset default styles
-// * {
-//   margin: 0;
-//   padding: 0;
-//   box-sizing: border-box;
-// }
-
-// html {
-//   font-size: 62.5%; // Sets the base font size to 10px for easy rem calculations (1rem = 10px)
-// }
-
-// // Your restored custom styles, now using theme variables
-// *::selection {
-//   background-color: var(--selection-bg);
-//   color: var(--selection-text);
-// }
-
-// a {
-//   text-decoration: none;
-//   color: inherit;
-// }
-
-
-
-
-/*
-Author: Wanda Azhar
-Location: Twin Falls, ID. USA
-Contact: wandaazhar@gmail.com
-Description: A responsive web admin dashboard for warungindomichigan.com built with React, TypeScript, Sass, and Firebase. Manage products, transactions, authentications, and more...
-*/
-
-
-
 @use './variable' as v;
 @use './responsive' as r;
 
-
+/*
+  Define color variables for both themes.
+  The 'data-theme' attribute on the body will control which set of variables is active.
+*/
 :root {
   --background-primary: #FAFAFA;
   --background-secondary: #F7F7F7;
-  --background-card: #F0F0F0;
+  --background-card: #FFFFFF;
   --text-primary: #1A202C; // Dark grey for text
   --text-secondary: #718096; // Lighter grey for secondary text
   --border-color: #E0E0E0;
@@ -111,100 +38,172 @@ Description: A responsive web admin dashboard for warungindomichigan.com built w
   --selection-text: #{v.$colorBackgroundDark};
 }
 
-
-html {
-  font-size: 62.5%;
+// General body styles
+body {
+  font-family: 'Inter', sans-serif; // Global font style
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+// Reset default styles
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html {
+  font-size: 62.5%; // Sets the base font size to 10px for easy rem calculations (1rem = 10px)
+}
+
+// Your restored custom styles, now using theme variables
 *::selection {
-  background-color: v.$colorBackgroundDark;
-  color: v.$colorBackgroundLight;
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
 }
 
 a {
   text-decoration: none;
-  columns: inherit;
-}
-
-.main {
-  font-family: "Inter", sans-serif;
-  background-color: v.$colorBackgroundLight;
-
+  color: inherit;
 }
 
 
-.allContainer {
-  display: flex;
-  // border: .1rem solid green;
-}
 
-.sidebarContainer.on {
-  left: 0;
-  z-index: 99;
-  width: 32rem;
-  // position: static;
-}
 
-.contentContainer {
-  padding: 2rem 2rem;
-  // max-width: 60rem;
-  width: 100%;
-  height: 80vh;
-  overflow: auto;
-  // border: .1rem solid salmon;
-  // margin-bottom: 10rem;
-}
+/*
+Author: Wanda Azhar
+Location: Twin Falls, ID. USA
+Contact: wandaazhar@gmail.com
+Description: A responsive web admin dashboard for warungindomichigan.com built with React, TypeScript, Sass, and Firebase. Manage products, transactions, authentications, and more...
+*/
 
-.pagination {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: center;
-  // background-color: red;
 
-  .box-container {
-    display: flex;
-    gap: 1.5rem;
 
-    // @include tablet {
-    //   gap: 1rem;
-    // }
+// @use './variable' as v;
+// @use './responsive' as r;
 
-    .link {
-      height: 3.5rem;
-      width: 3.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: .6rem;
-      border: .1rem solid v.$colorBackgroundDark;
-      color: v.$colorBackgroundDark;
-      text-decoration: none;
 
-      // @include tablet {
-      //   height: 2.5rem;
-      //   width: 2.5rem;
-      //   font-size: 1.4rem;
-      // }
-    }
+// :root {
+//   --background-primary: #FAFAFA;
+//   --background-secondary: #F7F7F7;
+//   --background-card: #F0F0F0;
+//   --text-primary: #1A202C; // Dark grey for text
+//   --text-secondary: #718096; // Lighter grey for secondary text
+//   --border-color: #E0E0E0;
+//   --shadow-color: rgba(100, 100, 111, 0.2);
+//   --selection-bg: #{v.$colorBackgroundDark};
+//   --selection-text: #{v.$colorBackgroundLight};
+// }
 
-    .link.active {
-      background-color: v.$colorBackgroundDark;
-      color: v.$colorBackgroundLight;
-      font-weight: 700;
-      font-size: 1.6rem;
-    }
+// [data-theme='dark'] {
+//   --background-primary: #1A202C;
+//   --background-secondary: #2D3748;
+//   --background-card: #4A5568;
+//   --text-primary: #F7FAFC; // Light text for dark mode
+//   --text-secondary: #A0AEC0; // Lighter grey for dark mode
+//   --border-color: #4A5568;
+//   --shadow-color: rgba(0, 0, 0, 0.4);
+//   --selection-bg: #{v.$colorTeal};
+//   --selection-text: #{v.$colorBackgroundDark};
+// }
 
-    .disabled {
-      background-color: grey-color;
-      color: v.$colorBackgroundDark;
-      cursor: not-allowed;
-      opacity: .3;
-    }
-  }
-}
+
+// html {
+//   font-size: 62.5%;
+// }
+
+// * {
+//   margin: 0;
+//   padding: 0;
+//   box-sizing: border-box;
+// }
+
+// *::selection {
+//   background-color: v.$colorBackgroundDark;
+//   color: v.$colorBackgroundLight;
+// }
+
+// a {
+//   text-decoration: none;
+//   columns: inherit;
+// }
+
+// .main {
+//   font-family: "Inter", sans-serif;
+//   background-color: v.$colorBackgroundLight;
+
+// }
+
+
+// .allContainer {
+//   display: flex;
+//   // border: .1rem solid green;
+// }
+
+// .sidebarContainer.on {
+//   left: 0;
+//   z-index: 99;
+//   width: 32rem;
+//   // position: static;
+// }
+
+// .contentContainer {
+//   padding: 2rem 2rem;
+//   // max-width: 60rem;
+//   width: 100%;
+//   height: 80vh;
+//   overflow: auto;
+//   // border: .1rem solid salmon;
+//   // margin-bottom: 10rem;
+// }
+
+// .pagination {
+//   margin-top: 1rem;
+//   display: flex;
+//   justify-content: center;
+//   // background-color: red;
+
+//   .box-container {
+//     display: flex;
+//     gap: 1.5rem;
+
+//     // @include tablet {
+//     //   gap: 1rem;
+//     // }
+
+//     .link {
+//       height: 3.5rem;
+//       width: 3.5rem;
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       border-radius: .6rem;
+//       border: .1rem solid v.$colorBackgroundDark;
+//       color: v.$colorBackgroundDark;
+//       text-decoration: none;
+
+//       // @include tablet {
+//       //   height: 2.5rem;
+//       //   width: 2.5rem;
+//       //   font-size: 1.4rem;
+//       // }
+//     }
+
+//     .link.active {
+//       background-color: v.$colorBackgroundDark;
+//       color: v.$colorBackgroundLight;
+//       font-weight: 700;
+//       font-size: 1.6rem;
+//     }
+
+//     .disabled {
+//       background-color: grey-color;
+//       color: v.$colorBackgroundDark;
+//       cursor: not-allowed;
+//       opacity: .3;
+//     }
+//   }
+// }
