@@ -23,12 +23,19 @@ interface ApiResponse {
 
 
 /**
- * Fetches a paginated list of products.
- * @param lastVisible - The ID of the last visible product to fetch the next page.
+ * Fetches a paginated list of products, with optional search.
+ * @param lastVisible - The ID of the last visible product.
+ * @param searchTerm - The term to search for.
  */
-export const getProducts = async (lastVisible: string | null = null): Promise<PaginatedProductsResponse> => {
+export const getProducts = async (
+  lastVisible: string | null = null,
+  searchTerm: string = ''
+): Promise<PaginatedProductsResponse> => {
   try {
-    const params = lastVisible ? { lastVisible } : {};
+    const params: { lastVisible?: string; searchTerm?: string } = {};
+    if (lastVisible) params.lastVisible = lastVisible;
+    if (searchTerm) params.searchTerm = searchTerm;
+
     const response = await axios.get<ApiResponse>(API_URL, { params });
     return response.data.data;
   } catch (error) {

@@ -8,6 +8,8 @@ import styles from './ProductPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import ProductForm from '../../components/productForm/ProductForm';
+import { useDebounce } from '../../hooks/useDebounce';
+import SkeletonLoader from '../../components/skeletonLoader/SkeletonLoader';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,6 +21,9 @@ const ProductsPage = () => {
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [lastVisible, setLastVisible] = useState<string | null>(null); // To store the cursor
   const [hasMore, setHasMore] = useState<boolean>(true); // To know if there are more products to load
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // Debounce search term
 
   // useEffect(() => {
   //   const fetchProducts = async () => {
@@ -41,30 +46,40 @@ const ProductsPage = () => {
     fetchProducts(true);
   }, []);
 
-  const fetchProducts = async (isInitialFetch = false) => {
+  // Combined effect for initial fetch and live search
+  useEffect(() => {
+    // Mark as searching to show skeleton loader
+    setIsSearching(true);
+    // Reset products list when search term changes
+    setProducts([]);
+    // Fetch products with the debounced search term
+    fetchProducts(true, debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
+
+  const fetchProducts = async (isInitialFetch = false, currentSearchTerm = '') => {
     if (!isInitialFetch) {
       setLoadingMore(true);
     } else {
-      setLoading(true);
+      setLoading(true); // Still use main loading for initial page/search load
     }
 
     try {
       const cursor = isInitialFetch ? null : lastVisible;
-      const data = await getProducts(cursor);
+      const data = await getProducts(cursor, currentSearchTerm);
 
       if (data.products.length > 0) {
         setProducts(prev => isInitialFetch ? data.products : [...prev, ...data.products]);
       }
 
       setLastVisible(data.lastVisible);
-      setHasMore(!!data.lastVisible); // If lastVisible is null, there are no more products
+      setHasMore(!!data.lastVisible);
       setError(null);
     } catch (err) {
       setError('Failed to load products.');
-      console.error(err);
     } finally {
       setLoading(false);
       setLoadingMore(false);
+      setIsSearching(false); // Done searching
     }
   };
 
@@ -156,6 +171,7 @@ const ProductsPage = () => {
 
   return (
     <div className={styles.productsPage}>
+      {/* Conditionally render the ProductForm as an overlay */}
       {isFormVisible && (
         <ProductForm
           onClose={handleCloseForm}
@@ -164,71 +180,87 @@ const ProductsPage = () => {
           initialData={editingProduct}
         />
       )}
+
       <header className={styles.header}>
         <h1>All Menus</h1>
         <div className={styles.headerActions}>
-          <input type="text" placeholder="Search here..." className={styles.searchInput} />
+          <input
+            type="text"
+            placeholder="Search products by name..."
+            className={styles.searchInput}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
           <button onClick={handleAddProductClick} className={styles.addButton}>Add Product +</button>
         </div>
       </header>
 
       <div className={styles.tableContainer}>
-        {loading && <p>Loading products...</p>}
-        {error && <p className={styles.errorText}>{error}</p>}
-        {!loading && !error && (
-          <table className={styles.productsTable}>
-            {/* ... (your table head is the same) ... */}
-            <tbody>
-              {products.map(product => (
-                <tr key={product.id}>
-                  <td>
-                    <div className={styles.productNameCell}>
-                      {product.imageUrl ? (
-                        <img src={product.imageUrl} alt={product.name} className={styles.productImage} />
-                      ) : (
-                        <div className={styles.productImagePlaceholder}></div>
-                      )}
-                      <span>
-                        {product.name}
-                        <small>{product.category}</small>
-                      </span>
-                    </div>
-                  </td>
-                  <td>${(product.price / 100).toFixed(2)}</td>
-                  <td>{product.category}</td>
-                  <td>
-                    <div className={styles.actionButtons}>
-                      <button onClick={() => handleEditClick(product)} title="Edit">
-                        <FontAwesomeIcon icon={faPenToSquare} />
-                      </button>
-                      {/* <button onClick={() => handleDelete(product.id)} title="Delete" className={styles.deleteButton}>
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button> */}
+        <table className={styles.productsTable}>
+          <thead>
+            <tr>
+              <th>Name Products</th>
+              <th>Price</th>
+              <th>Category</th>
+              <th>Action</th>
+            </tr>
+          </thead>
 
-                      <button
-                        onClick={() => handleDelete(product.id, product.imageUrl)}
-                        title="Delete"
-                        className={styles.deleteButton}
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </div>
+          {/* Conditional rendering for the table body */}
+          {(loading || isSearching) ? (
+            <SkeletonLoader rows={5} />
+          ) : (
+            <tbody>
+              {products.length > 0 ? (
+                products.map(product => (
+                  <tr key={product.id}>
+                    <td>
+                      <div className={styles.productNameCell}>
+                        {product.imageUrl ? (
+                          <img src={product.imageUrl} alt={product.name} className={styles.productImage} />
+                        ) : (
+                          <div className={styles.productImagePlaceholder}></div>
+                        )}
+                        <span>
+                          {product.name}
+                          <small>{product.category}</small>
+                        </span>
+                      </div>
+                    </td>
+                    <td>${(product.price / 100).toFixed(2)}</td>
+                    <td>{product.category}</td>
+                    <td>
+                      <div className={styles.actionButtons}>
+                        <button onClick={() => handleEditClick(product)} title="Edit">
+                          <FontAwesomeIcon icon={faPenToSquare} />
+                        </button>
+                        <button onClick={() => handleDelete(product.id, product.imageUrl)} title="Delete" className={styles.deleteButton}>
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: 'center', padding: '2rem' }}>
+                    No products found.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
-          </table>
-        )}
+          )}
+        </table>
       </div>
 
-      {/* --- PAGINATION BUTTON --- */}
+      {/* Pagination Container */}
       <div className={styles.paginationContainer}>
-        {hasMore && (
-          <button onClick={() => fetchProducts(false)} disabled={loadingMore} className={styles.loadMoreButton}>
+        {!isSearching && hasMore && (
+          <button onClick={() => fetchProducts(false, debouncedSearchTerm)} disabled={loadingMore} className={styles.loadMoreButton}>
             {loadingMore ? 'Loading...' : 'Load More'}
           </button>
         )}
-        {!loading && !hasMore && (
+        {!loading && !isSearching && !hasMore && (
           <p className={styles.endOfListText}>You've reached the end of the list.</p>
         )}
       </div>
