@@ -3,7 +3,8 @@ import type { Product } from '../types/product';
 import type { ProductFormData } from '../types/product';
 
 // The base URL of our backend API
-const API_URL = 'http://localhost:8080/api/products';
+// const API_URL = 'http://localhost:8080/api/products';
+const API_URL = 'http://192.168.0.52:8080/api/products';
 
 // interface ApiResponse {
 //   message: string;
