@@ -23,18 +23,32 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error, initialData }: Produ
   const [price, setPrice] = useState('');
   const [imageFile, setImageFile] = useState<File | undefined>();
   const [validationError, setValidationError] = useState('');
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // <-- NEW STATE for the preview URL
 
   useEffect(() => {
     if (initialData) {
+      // Manually build the object to ensure types match perfectly
       setFormData({
         name: initialData.name,
-        slug: initialData.slug || '',
+        // Use the slug from initialData, OR default to an empty string if it's undefined
+        slug: initialData.slug ?? '', // <-- THIS IS THE FIX
         description: initialData.description,
         category: initialData.category,
         stockQuantity: initialData.stockQuantity,
         imageUrl: initialData.imageUrl
       });
+      // Set the price separately
       setPrice((initialData.price / 100).toString());
+      // Set the image preview if an image URL exists
+      if (initialData.imageUrl) {
+        setImagePreview(initialData.imageUrl);
+      }
+    }
+    // Cleanup function for local image previews
+    return () => {
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
     }
   }, [initialData]);
 
@@ -50,8 +64,16 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error, initialData }: Produ
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      // Create a temporary local URL for the new image and set it for preview
+      const newPreviewUrl = URL.createObjectURL(file);
+      // If there was an old blob preview, revoke it to prevent memory leaks
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
+      setImagePreview(newPreviewUrl);
     }
   };
 
@@ -99,6 +121,10 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error, initialData }: Produ
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="image">Image Product</label>
+              {/* --- NEW IMAGE PREVIEW --- */}
+              {imagePreview && (
+                <img src={imagePreview} alt="Product Preview" className={styles.imagePreview} />
+              )}
               <input type="file" id="image" name="image" onChange={handleFileChange} accept="image/*" disabled={isLoading} />
             </div>
             <div className={styles.formGroup}>
