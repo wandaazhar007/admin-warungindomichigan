@@ -146,3 +146,15 @@ form {
     opacity: 0.6;
   }
 }
+
+.imagePreview {
+  width: 100%;
+  max-width: 100px; // Set a max width
+  height: 100px; // Set a fixed height
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  object-fit: cover; // Use 'cover' to fill the space without distortion
+  // margin: 0 auto 0.75rem auto; 
+  // Center the image and add margin below
+  display: block; // Ensures margin auto works correctly
+}
