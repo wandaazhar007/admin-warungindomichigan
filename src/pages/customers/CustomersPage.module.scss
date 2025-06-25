@@ -5,7 +5,6 @@ Contact: wandaazhar@gmail.com
 Description: A responsive web admin dashboard for warungindomichigan.com built with React, TypeScript, Sass, and Firebase. Manage products, transactions, authentications, and more...
 */
 
-
 .customersPage {
   width: 100%;
 }
@@ -19,6 +18,24 @@ Description: A responsive web admin dashboard for warungindomichigan.com built w
   h1 {
     color: var(--text-primary);
     font-size: 2rem;
+  }
+}
+
+.headerActions {
+  display: flex;
+}
+
+.searchInput {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--background-card);
+  color: var(--text-primary);
+  min-width: 300px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--selection-bg);
   }
 }
 
@@ -40,6 +57,7 @@ Description: A responsive web admin dashboard for warungindomichigan.com built w
     text-align: left;
     color: var(--text-primary);
     border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
   }
 
   th {
@@ -60,14 +78,53 @@ Description: A responsive web admin dashboard for warungindomichigan.com built w
   font-weight: 600;
 }
 
-.customerAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
+.viewButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+
+  &:hover {
+    color: var(--selection-bg);
+  }
+}
+
+.noResults {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
 }
 
 .errorText {
   color: #e53935;
+  font-weight: 500;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.loadMoreButton {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+  border: none;
+  padding: 0.8rem 2.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.endOfListText {
+  color: var(--text-secondary);
   font-weight: 500;
 }

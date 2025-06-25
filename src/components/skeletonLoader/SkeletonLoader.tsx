@@ -1,18 +1,25 @@
 import styles from './SkeletonLoader.module.scss';
 
-interface SkeletonLoaderProps {
-  rows?: number;
+// Define a type for the column configuration
+interface ColumnConfig {
+  width: string;
 }
 
-const SkeletonLoader = ({ rows = 5 }: SkeletonLoaderProps) => {
+interface SkeletonLoaderProps {
+  rows?: number;
+  columns: ColumnConfig[]; // Accept an array of column configs
+}
+
+const SkeletonLoader = ({ rows = 5, columns }: SkeletonLoaderProps) => {
   return (
     <tbody>
-      {[...Array(rows)].map((_, index) => (
-        <tr key={index} className={styles.skeletonRow}>
-          <td><div className={styles.skeletonCell} style={{ width: '250px' }}></div></td>
-          <td><div className={styles.skeletonCell} style={{ width: '80px' }}></div></td>
-          <td><div className={styles.skeletonCell} style={{ width: '120px' }}></div></td>
-          <td><div className={styles.skeletonCell} style={{ width: '100px' }}></div></td>
+      {[...Array(rows)].map((_, rowIndex) => (
+        <tr key={rowIndex} className={styles.skeletonRow}>
+          {columns.map((column, colIndex) => (
+            <td key={colIndex}>
+              <div className={styles.skeletonCell} style={{ width: column.width }}></div>
+            </td>
+          ))}
         </tr>
       ))}
     </tbody>
