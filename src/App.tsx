@@ -7,6 +7,7 @@ import { useAuthStatus } from './hooks/useAuthStatus';
 import { Toaster } from 'react-hot-toast';
 import CustomersPage from './pages/customers/CustomersPage';
 import CustomerDetailPage from './pages/customerDetail/CustomerDetailPage';
+import OrdersPage from './pages/orders/OrdersPage';
 // import './App.css';
 
 // This component will wrap all our protected pages
@@ -52,6 +53,7 @@ function App() {
             <Route path="products" element={<ProductsPage />} />
             <Route path="customers" element={<CustomersPage />} />
             <Route path="customers/:customerId" element={<CustomerDetailPage />} />
+            <Route path="orders" element={<OrdersPage />} />
           </Route>
         </Routes>
       </Router>
