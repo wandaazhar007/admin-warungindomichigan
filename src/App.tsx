@@ -5,6 +5,7 @@ import LoginPage from './pages/login/LoginPage';
 import ProductsPage from './pages/products/ProductsPage';
 import { useAuthStatus } from './hooks/useAuthStatus';
 import { Toaster } from 'react-hot-toast';
+import CustomersPage from './pages/customers/CustomersPage';
 // import './App.css';
 
 // This component will wrap all our protected pages
@@ -25,7 +26,7 @@ const ProtectedRoutes = () => {
 function App() {
   return (
     <> {/* Use a fragment to wrap the Router and Toaster */}
-      <Toaster // <-- ADD THE TOASTER COMPONENT HERE
+      <Toaster // <-- ADD THE TOASTER COMPONENT
         position="top-right"
         toastOptions={{
           success: {
@@ -48,6 +49,7 @@ function App() {
           <Route path="/" element={<ProtectedRoutes />}>
             <Route index element={<DashboardPage />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="customers" element={<CustomersPage />} />
           </Route>
         </Routes>
       </Router>
