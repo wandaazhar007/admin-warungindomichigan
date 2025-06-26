@@ -1,0 +1,61 @@
+.detailPage {
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 2rem;
+    color: var(--text-secondary);
+  }
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: var(--selection-bg);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.tableContainer {
+  background-color: var(--background-card);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-color);
+}
+
+.ordersTable {
+  width: 100%;
+  // ... (similar styles to your other tables)
+}
+
+.orderId {
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.8rem;
+
+  &.pending {
+    background-color: #ffc107;
+    color: black;
+  }
+
+  &.shipped {
+    background-color: #17a2b8;
+    color: white;
+  }
+
+  &.delivered {
+    background-color: #28a745;
+    color: white;
+  }
+
+  // ... add other statuses
+}

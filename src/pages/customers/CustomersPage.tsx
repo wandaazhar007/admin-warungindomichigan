@@ -7,6 +7,7 @@ import SkeletonLoader from '../../components/skeletonLoader/SkeletonLoader'; // 
 import styles from './CustomersPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 const CustomersPage = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -18,6 +19,7 @@ const CustomersPage = () => {
   const [nextPageToken, setNextPageToken] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -47,7 +49,8 @@ const CustomersPage = () => {
   };
 
   const handleViewHistory = (customerId: string) => {
-    console.log("Viewing history for customer:", customerId);
+    // Navigate to the new detail page
+    navigate(`/customers/${customerId}`);
   };
 
   // Define the column configuration for the customer table skeleton
