@@ -21,16 +21,20 @@ interface ApiResponse {
  */
 export const getOrdersByUserId = async (
   userId: string,
-  lastVisible: string | null = null
+  lastVisible: string | null = null,
+  searchTerm: string = '' // <-- ADD SEARCHTERM
 ): Promise<PaginatedOrdersResponse> => {
   const token = await getIdToken();
   if (!token) throw new Error("User not authenticated");
 
   try {
-    const params = lastVisible ? { lastVisible } : {};
+    const params: { lastVisible?: string, searchTerm?: string } = {}; // <-- DEFINE PARAMS
+    if (lastVisible) params.lastVisible = lastVisible;
+    if (searchTerm) params.searchTerm = searchTerm;
+
     const response = await axios.get<ApiResponse>(`${API_URL}/user/${userId}`, {
       headers: { 'Authorization': `Bearer ${token}` },
-      params
+      params // <-- PASS PARAMS
     });
     return response.data.data;
   } catch (error) {

@@ -48,9 +48,9 @@ const CustomersPage = () => {
     }
   };
 
-  const handleViewHistory = (customerId: string) => {
-    // Navigate to the new detail page
-    navigate(`/customers/${customerId}`);
+  const handleViewHistory = (customer: Customer) => {
+    // Navigate to the detail page AND pass the customer object in the state
+    navigate(`/customers/${customer.uid}`, { state: { customer } });
   };
 
   // Define the column configuration for the customer table skeleton
@@ -100,7 +100,7 @@ const CustomersPage = () => {
                   <td>{customer.email}</td>
                   <td>{new Date(customer.creationTime).toLocaleDateString()}</td>
                   <td>
-                    <button onClick={() => handleViewHistory(customer.uid)} className={styles.viewButton} title="View History">
+                    <button onClick={() => handleViewHistory(customer)} className={styles.viewButton} title="View History">
                       <FontAwesomeIcon icon={faEye} />
                     </button>
                   </td>
