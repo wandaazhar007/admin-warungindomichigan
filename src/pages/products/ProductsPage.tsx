@@ -2,57 +2,34 @@ import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../services/productService';
 import type { Product, ProductFormData } from '../../types/product';
+import { useDebounce } from '../../hooks/useDebounce';
+import SkeletonLoader from '../../components/skeletonLoader/SkeletonLoader';
+import ProductForm from '../../components/productForm/ProductForm';
 import { getIdToken } from '../../services/authService';
 import { uploadImage, deleteImageByUrl } from '../../services/storageService';
 import styles from './ProductPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
-import ProductForm from '../../components/productForm/ProductForm';
-import { useDebounce } from '../../hooks/useDebounce';
-import SkeletonLoader from '../../components/skeletonLoader/SkeletonLoader';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // State for form and pagination
   const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [lastVisible, setLastVisible] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
-  const [lastVisible, setLastVisible] = useState<string | null>(null); // To store the cursor
-  const [hasMore, setHasMore] = useState<boolean>(true); // To know if there are more products to load
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm, 500); // Debounce search term
-
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const data = await getProducts();
-  //       setProducts(data);
-  //       setError(null);
-  //     } catch (err) {
-  //       setError('Failed to load products.');
-  //       console.error(err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, []);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchProducts(true);
-  }, []);
-
-  // Combined effect for initial fetch and live search
-  useEffect(() => {
-    // Mark as searching to show skeleton loader
     setIsSearching(true);
-    // Reset products list when search term changes
     setProducts([]);
-    // Fetch products with the debounced search term
     fetchProducts(true, debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
@@ -60,17 +37,13 @@ const ProductsPage = () => {
     if (!isInitialFetch) {
       setLoadingMore(true);
     } else {
-      setLoading(true); // Still use main loading for initial page/search load
+      setLoading(true);
+      setIsSearching(true);
     }
-
     try {
       const cursor = isInitialFetch ? null : lastVisible;
       const data = await getProducts(cursor, currentSearchTerm);
-
-      if (data.products.length > 0) {
-        setProducts(prev => isInitialFetch ? data.products : [...prev, ...data.products]);
-      }
-
+      setProducts(prev => isInitialFetch ? data.products : [...prev, ...data.products]);
       setLastVisible(data.lastVisible);
       setHasMore(!!data.lastVisible);
       setError(null);
@@ -79,7 +52,7 @@ const ProductsPage = () => {
     } finally {
       setLoading(false);
       setLoadingMore(false);
-      setIsSearching(false); // Done searching
+      setIsSearching(false);
     }
   };
 
@@ -106,14 +79,15 @@ const ProductsPage = () => {
       setIsSubmitting(false);
       return;
     }
-
     try {
       let imageUrl = editingProduct?.imageUrl || '';
       if (imageFile) {
+        if (editingProduct?.imageUrl) {
+          await deleteImageByUrl(editingProduct.imageUrl);
+        }
         imageUrl = await uploadImage(imageFile);
       }
       const finalProductData = { ...formData, imageUrl };
-
       if (editingProduct) {
         await updateProduct(editingProduct.id, finalProductData, token);
         setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...finalProductData, id: p.id, price: finalProductData.price } : p));
@@ -131,47 +105,37 @@ const ProductsPage = () => {
     }
   };
 
-  // const handleDelete = (id: string) => { console.log("Delete product:", id); };
-
   const handleDelete = async (productId: string, imageUrl: string) => {
-    // Use a simple browser confirmation dialog
-    if (!window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
-      return;
-    }
-
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
     const token = await getIdToken();
     if (!token) {
-      toast.error("Authentication error. Please log in again.");
+      toast.error("Authentication error.");
       return;
     }
-
+    const deleteToast = toast.loading("Deleting product...");
     try {
-      // Show a loading toast while deleting
-      const deleteToast = toast.loading("Deleting product...");
-
-      // 1. Delete the product document from Firestore
       await deleteProduct(productId, token);
-
-      // 2. Delete the associated image from Firebase Storage (if it exists)
       if (imageUrl) {
         await deleteImageByUrl(imageUrl);
       }
-
-      // 3. Update the UI by filtering out the deleted product
       setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
-
-      // Update the toast to show success
       toast.success("Product deleted successfully!", { id: deleteToast });
-
     } catch (error) {
-      console.error("Failed to delete product:", error);
-      toast.error("Failed to delete product.");
+      toast.error("Failed to delete product.", { id: deleteToast });
     }
   };
 
+  // --- THIS IS THE FIX ---
+  // Define the column configuration for the product table skeleton
+  const skeletonColumns = [
+    { width: '300px' },
+    { width: '100px' },
+    { width: '150px' },
+    { width: '100px' },
+  ];
+
   return (
     <div className={styles.productsPage}>
-      {/* Conditionally render the ProductForm as an overlay */}
       {isFormVisible && (
         <ProductForm
           onClose={handleCloseForm}
@@ -180,7 +144,6 @@ const ProductsPage = () => {
           initialData={editingProduct}
         />
       )}
-
       <header className={styles.header}>
         <h1>All Menus</h1>
         <div className={styles.headerActions}>
@@ -194,7 +157,6 @@ const ProductsPage = () => {
           <button onClick={handleAddProductClick} className={styles.addButton}>Add Product +</button>
         </div>
       </header>
-
       <div className={styles.tableContainer}>
         <table className={styles.productsTable}>
           <thead>
@@ -205,10 +167,9 @@ const ProductsPage = () => {
               <th>Action</th>
             </tr>
           </thead>
-
-          {/* Conditional rendering for the table body */}
           {(loading || isSearching) ? (
-            <SkeletonLoader rows={5} />
+            // Pass the defined columns to the SkeletonLoader
+            <SkeletonLoader columns={skeletonColumns} rows={10} />
           ) : (
             <tbody>
               {products.length > 0 ? (
@@ -243,24 +204,20 @@ const ProductsPage = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} style={{ textAlign: 'center', padding: '2rem' }}>
-                    No products found.
-                  </td>
+                  <td colSpan={4} className={styles.noResults}>No products found.</td>
                 </tr>
               )}
             </tbody>
           )}
         </table>
       </div>
-
-      {/* Pagination Container */}
       <div className={styles.paginationContainer}>
         {!isSearching && hasMore && (
           <button onClick={() => fetchProducts(false, debouncedSearchTerm)} disabled={loadingMore} className={styles.loadMoreButton}>
             {loadingMore ? 'Loading...' : 'Load More'}
           </button>
         )}
-        {!loading && !isSearching && !hasMore && (
+        {!loading && !isSearching && !hasMore && products.length > 0 && (
           <p className={styles.endOfListText}>You've reached the end of the list.</p>
         )}
       </div>
@@ -269,4 +226,3 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
-
