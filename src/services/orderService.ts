@@ -71,3 +71,24 @@ export const getAllOrders = async (
     throw error;
   }
 };
+
+/**
+ * Updates the status of a specific order.
+ * @param orderId The ID of the order to update.
+ * @param status The new status for the order.
+ */
+export const updateOrderStatus = async (orderId: string, status: string): Promise<void> => {
+  const token = await getIdToken();
+  if (!token) throw new Error("User not authenticated");
+
+  try {
+    await axios.put(`${API_URL}/${orderId}/status`, { status }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  } catch (error) {
+    console.error(`Failed to update status for order ${orderId}:`, error);
+    throw error;
+  }
+};
