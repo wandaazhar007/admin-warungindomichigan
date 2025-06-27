@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast';
 import CustomersPage from './pages/customers/CustomersPage';
 import CustomerDetailPage from './pages/customerDetail/CustomerDetailPage';
 import OrdersPage from './pages/orders/OrdersPage';
+import OrderDetailPage from './pages/orderDetail/OrderDetailPage';
 // import './App.css';
 
 // This component will wrap all our protected pages
@@ -54,6 +55,7 @@ function App() {
             <Route path="customers" element={<CustomersPage />} />
             <Route path="customers/:customerId" element={<CustomerDetailPage />} />
             <Route path="orders" element={<OrdersPage />} />
+            <Route path="orders/:orderId" element={<OrderDetailPage />} />
           </Route>
         </Routes>
       </Router>
