@@ -92,3 +92,27 @@ export const updateOrderStatus = async (orderId: string, status: string): Promis
     throw error;
   }
 };
+
+interface SingleOrderApiResponse {
+  message: string;
+  data: Order;
+}
+
+/**
+ * Fetches a single order by its ID.
+ * @param orderId The ID of the order to fetch.
+ */
+export const getOrderById = async (orderId: string): Promise<Order> => {
+  const token = await getIdToken();
+  if (!token) throw new Error("User not authenticated");
+
+  try {
+    const response = await axios.get<SingleOrderApiResponse>(`${API_URL}/${orderId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error(`Failed to fetch order ${orderId}:`, error);
+    throw error;
+  }
+};

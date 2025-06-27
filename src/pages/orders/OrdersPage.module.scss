@@ -117,53 +117,74 @@
   }
 }
 
-.actionsCell {
-  position: relative;
-  text-align: center;
+// .actionsCell {
+//   position: relative;
+//   text-align: center;
 
-  >button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-secondary);
-    padding: 0.5rem;
+//   >button {
+//     background: none;
+//     border: none;
+//     cursor: pointer;
+//     color: var(--text-secondary);
+//     padding: 0.5rem;
 
-    &:hover {
-      color: var(--text-primary);
-    }
+//     &:hover {
+//       color: var(--text-primary);
+//     }
+//   }
+// }
+
+// .actionsMenu {
+//   position: absolute;
+//   right: 100%;
+//   top: 0;
+//   background-color: var(--background-card);
+//   border: 1px solid var(--border-color);
+//   border-radius: 6px;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+//   z-index: 10;
+//   width: max-content;
+//   display: flex;
+//   flex-direction: column;
+
+//   button {
+//     background: none;
+//     border: none;
+//     padding: 0.75rem 1.5rem;
+//     text-align: left;
+//     cursor: pointer;
+//     width: 100%;
+//     color: var(--text-primary);
+//     white-space: nowrap;
+
+//     &:hover {
+//       background-color: var(--background-primary);
+//     }
+
+//     &.cancelOption {
+//       color: #e53935;
+//       border-top: 1px solid var(--border-color);
+//     }
+//   }
+// }
+
+tbody tr.clickableRow {
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--background-primary);
   }
 }
 
-.actionsMenu {
-  position: absolute;
-  right: 100%;
-  top: 0;
-  background-color: var(--background-card);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  width: max-content;
-  display: flex;
-  flex-direction: column;
+.ordersTable {
 
-  button {
-    background: none;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    text-align: left;
+  // ...
+  tbody tr:hover {
+    background-color: var(--background-primary);
+  }
+
+  // ADD THIS CLASS
+  tbody tr.clickableRow {
     cursor: pointer;
-    width: 100%;
-    color: var(--text-primary);
-    white-space: nowrap;
-
-    &:hover {
-      background-color: var(--background-primary);
-    }
-
-    &.cancelOption {
-      color: #e53935;
-      border-top: 1px solid var(--border-color);
-    }
   }
 }
