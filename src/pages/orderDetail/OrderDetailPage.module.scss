@@ -1,3 +1,188 @@
+// .detailPage {
+//   h1 {
+//     font-size: 2rem;
+//   }
+// }
+
+// .backButton {
+//   background: none;
+//   border: none;
+//   color: var(--selection-bg);
+//   font-weight: 600;
+//   font-size: 1rem;
+//   cursor: pointer;
+//   margin-bottom: 1.5rem;
+//   padding: 0;
+// }
+
+// .header {
+//   margin-bottom: 2rem;
+
+//   .orderId {
+//     color: var(--text-secondary);
+//     font-family: monospace;
+//   }
+// }
+
+// .detailsGrid {
+//   display: grid;
+//   grid-template-columns: 1fr 1fr;
+//   gap: 1.5rem;
+//   margin-bottom: 1.5rem;
+// }
+
+// .detailCard,
+// .itemsCard {
+//   background-color: var(--background-card);
+//   border-radius: 8px;
+//   padding: 1.5rem;
+//   box-shadow: var(--shadow-color);
+
+//   h3 {
+//     margin-top: 0;
+//     margin-bottom: 1.5rem;
+//   }
+
+//   p {
+//     margin-bottom: 0.5rem;
+//   }
+// }
+
+// .summaryRow {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 0.75rem 0;
+//   border-bottom: 1px solid var(--border-color);
+
+//   &:last-child {
+//     border-bottom: none;
+//   }
+
+//   span:first-child {
+//     color: var(--text-secondary);
+//   }
+// }
+
+// .actionsContainer {
+//   position: relative;
+//   margin-top: 1.5rem;
+// }
+
+// .updateStatusButton {
+//   width: 100%;
+//   background-color: var(--selection-bg);
+//   color: var(--selection-text);
+//   border: none;
+//   padding: 0.8rem;
+//   font-weight: 600;
+//   border-radius: 6px;
+//   cursor: pointer;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   gap: 0.5rem;
+// }
+
+// .actionsMenu {
+//   position: absolute;
+//   bottom: 100%;
+//   left: 0;
+//   width: 100%;
+//   background-color: var(--background-secondary);
+//   border: 1px solid var(--border-color);
+//   border-radius: 6px;
+//   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+//   z-index: 10;
+//   margin-bottom: 0.5rem;
+
+//   button {
+//     background: none;
+//     border: none;
+//     padding: 0.75rem 1.5rem;
+//     text-align: left;
+//     cursor: pointer;
+//     width: 100%;
+//     color: var(--text-primary);
+
+//     &:hover {
+//       background-color: var(--background-primary);
+//     }
+
+//     &.cancelOption {
+//       color: #e53935;
+//       border-top: 1px solid var(--border-color);
+//     }
+//   }
+// }
+
+// .itemList {
+//   list-style: none;
+//   padding: 0;
+
+//   li {
+//     display: flex;
+//     align-items: center;
+//     gap: 1rem;
+//     padding: 0.75rem 0;
+//     border-bottom: 1px solid var(--border-color);
+
+//     &:last-child {
+//       border-bottom: none;
+//     }
+//   }
+// }
+
+// .itemQuantity {
+//   background-color: var(--selection-bg);
+//   color: var(--selection-text);
+//   font-weight: 700;
+//   border-radius: 4px;
+//   padding: 0.25rem 0.6rem;
+// }
+
+// .itemName {
+//   flex-grow: 1;
+//   font-weight: 500;
+// }
+
+// .itemPrice {
+//   color: var(--text-secondary);
+// }
+
+// .status {
+//   padding: 0.25rem 0.75rem;
+//   border-radius: 12px;
+//   font-weight: 600;
+//   text-transform: capitalize;
+
+//   &.pending {
+//     background-color: #ffc107;
+//     color: black;
+//   }
+
+//   &.processing {
+//     background-color: #007bff;
+//     color: white;
+//   }
+
+//   &.shipped {
+//     background-color: #17a2b8;
+//     color: white;
+//   }
+
+//   &.delivered {
+//     background-color: #28a745;
+//     color: white;
+//   }
+
+//   &.cancelled {
+//     background-color: #dc3545;
+//     color: white;
+//   }
+// }
+
+
 .detailPage {
   h1 {
     font-size: 2rem;
@@ -44,8 +229,21 @@
   }
 
   p {
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem 0;
   }
+}
+
+.subheading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.address {
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .summaryRow {
@@ -61,6 +259,11 @@
 
   span:first-child {
     color: var(--text-secondary);
+  }
+
+  strong {
+    font-weight: 700;
+    font-size: 1.1rem;
   }
 }
 
@@ -119,12 +322,13 @@
 .itemList {
   list-style: none;
   padding: 0;
+  margin: 0;
 
   li {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 0.75rem 0;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--border-color);
 
     &:last-child {
@@ -179,5 +383,24 @@
   &.cancelled {
     background-color: #dc3545;
     color: white;
+  }
+}
+
+.costsSection {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.costRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+
+  &.totalRow {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
   }
 }

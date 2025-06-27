@@ -55,6 +55,10 @@ const OrderDetailPage = () => {
   if (error) return <p>{error}</p>;
   if (!order) return <p>Order not found.</p>;
 
+  const subtotal = order.items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const shipping = order.shippingCost || 0;
+  const total = order.totalAmount;
+
   return (
     <div className={styles.detailPage}>
       <button onClick={() => navigate(-1)} className={styles.backButton}>&larr; Back to All Orders</button>
@@ -69,6 +73,13 @@ const OrderDetailPage = () => {
           <p>{order.customerDetails.name}</p>
           <p>{order.customerDetails.email}</p>
           <p>{order.customerDetails.phone}</p>
+          {/* --- NEW: Shipping Address --- */}
+          <h4 className={styles.subheading}>Shipping Address</h4>
+          <p className={styles.address}>
+            {order.customerDetails.shippingAddress?.street}<br />
+            {order.customerDetails.shippingAddress?.city}, {order.customerDetails.shippingAddress?.state} {order.customerDetails.shippingAddress?.zipCode}<br />
+            {order.customerDetails.shippingAddress?.country}
+          </p>
         </div>
         <div className={styles.detailCard}>
           <h3>Summary</h3>
@@ -80,11 +91,15 @@ const OrderDetailPage = () => {
             <span>Date</span>
             <span>{new Date((order.createdAt as any)._seconds * 1000).toLocaleString()}</span>
           </div>
+          {/* --- NEW: Payment Method --- */}
+          <div className={styles.summaryRow}>
+            <span>Payment</span>
+            <span>{order.paymentMethod}</span>
+          </div>
           <div className={styles.summaryRow}>
             <span>Total</span>
-            <strong>${(order.totalAmount / 100).toFixed(2)}</strong>
+            <strong>${(total / 100).toFixed(2)}</strong>
           </div>
-          {/* --- NEW ACTIONS DROPDOWN --- */}
           <div className={styles.actionsContainer}>
             <button className={styles.updateStatusButton} onClick={() => setIsMenuOpen(!isMenuOpen)}>
               Update Status <FontAwesomeIcon icon={faChevronDown} />
@@ -112,6 +127,21 @@ const OrderDetailPage = () => {
             </li>
           ))}
         </ul>
+        {/* --- NEW: Costs section --- */}
+        <div className={styles.costsSection}>
+          <div className={styles.costRow}>
+            <span>Subtotal</span>
+            <span>${(subtotal / 100).toFixed(2)}</span>
+          </div>
+          <div className={styles.costRow}>
+            <span>Shipping</span>
+            <span>${(shipping / 100).toFixed(2)}</span>
+          </div>
+          <div className={`${styles.costRow} ${styles.totalRow}`}>
+            <span>Total</span>
+            <span>${(total / 100).toFixed(2)}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
