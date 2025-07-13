@@ -9,6 +9,7 @@ import CustomersPage from './pages/customers/CustomersPage';
 import CustomerDetailPage from './pages/customerDetail/CustomerDetailPage';
 import OrdersPage from './pages/orders/OrdersPage';
 import OrderDetailPage from './pages/orderDetail/OrderDetailPage';
+import CategoriesPage from './pages/categories/CategoriesPage';
 // import './App.css';
 
 // This component will wrap all our protected pages
@@ -56,6 +57,7 @@ function App() {
             <Route path="customers/:customerId" element={<CustomerDetailPage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="orders/:orderId" element={<OrderDetailPage />} />
+            <Route path="categories" element={<CategoriesPage />} />
           </Route>
         </Routes>
       </Router>

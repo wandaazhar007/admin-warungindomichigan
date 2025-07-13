@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { getCategories } from '../../services/categoryService';
+import type { Category } from '../../services/categoryService';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../services/productService';
 import type { Product, ProductFormData } from '../../types/product';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -13,6 +15,7 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,6 +29,28 @@ const ProductsPage = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Initial data fetch for both products and categories
+    const initialLoad = async () => {
+      try {
+        setLoading(true);
+        const productsData = await getProducts(); // Fetch first page of products
+        const categoriesData = await getCategories(); // Fetch all categories
+
+        setProducts(productsData.products);
+        setLastVisible(productsData.lastVisible);
+        setHasMore(!!productsData.lastVisible);
+        setCategories(categoriesData); // Set the categories state
+      } catch (err) {
+        setError('Failed to load initial data.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    initialLoad();
+  }, []);
 
   useEffect(() => {
     setIsSearching(true);
@@ -142,6 +167,7 @@ const ProductsPage = () => {
           onSubmit={handleSubmitForm}
           isLoading={isSubmitting}
           initialData={editingProduct}
+          categories={categories}
         />
       )}
       <header className={styles.header}>
