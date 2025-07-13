@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Product, ProductFormData } from '../../types/product';
+import type { Category } from '../../services/categoryService';
 import styles from './ProductForm.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -10,9 +11,10 @@ interface ProductFormProps {
   isLoading: boolean;
   error?: string | null;
   initialData?: Product | null;
+  categories: Category[];
 }
 
-const ProductForm = ({ onSubmit, onClose, isLoading, error, initialData }: ProductFormProps) => {
+const ProductForm = ({ onSubmit, onClose, isLoading, error, initialData, categories }: ProductFormProps) => {
   const [formData, setFormData] = useState<Omit<ProductFormData, 'price'>>({
     name: '',
     slug: '',
@@ -25,32 +27,69 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error, initialData }: Produ
   const [validationError, setValidationError] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null); // <-- NEW STATE for the preview URL
 
+  // useEffect(() => {
+  //   if (initialData) {
+  //     // Manually build the object to ensure types match perfectly
+  //     setFormData({
+  //       name: initialData.name,
+  //       // Use the slug from initialData, OR default to an empty string if it's undefined
+  //       slug: initialData.slug ?? '', // <-- THIS IS THE FIX
+  //       description: initialData.description,
+  //       category: initialData.category,
+  //       stockQuantity: initialData.stockQuantity,
+  //       imageUrl: initialData.imageUrl
+  //     });
+  //     // Set the price separately
+  //     setPrice((initialData.price / 100).toString());
+  //     // Set the image preview if an image URL exists
+  //     if (initialData.imageUrl) {
+  //       setImagePreview(initialData.imageUrl);
+  //     }
+  //   }
+  //   // Cleanup function for local image previews
+  //   return () => {
+  //     if (imagePreview && imagePreview.startsWith('blob:')) {
+  //       URL.revokeObjectURL(imagePreview);
+  //     }
+  //   }
+  // }, [initialData]);
   useEffect(() => {
+    // This block runs when the form is in EDIT mode
     if (initialData) {
-      // Manually build the object to ensure types match perfectly
+      // Pre-fill the form state with the data of the product being edited
       setFormData({
         name: initialData.name,
-        // Use the slug from initialData, OR default to an empty string if it's undefined
-        slug: initialData.slug ?? '', // <-- THIS IS THE FIX
+        slug: initialData.slug ?? '', // Use the product's slug, or default to an empty string
         description: initialData.description,
         category: initialData.category,
         stockQuantity: initialData.stockQuantity,
         imageUrl: initialData.imageUrl
       });
-      // Set the price separately
+      // Set the price separately, converting from cents to a string for the input
       setPrice((initialData.price / 100).toString());
-      // Set the image preview if an image URL exists
+
+      // If the product has an existing image, set it as the preview
       if (initialData.imageUrl) {
         setImagePreview(initialData.imageUrl);
       }
     }
-    // Cleanup function for local image previews
+    // This block runs when the form is in CREATE mode
+    else {
+      // If we are creating a new product, set its default category
+      // to be the first one from the fetched categories list.
+      if (categories.length > 0) {
+        setFormData(prev => ({ ...prev, category: categories[0].name }));
+      }
+    }
+
+    // This is a cleanup function that runs when the component is unmounted.
+    // It prevents memory leaks by revoking the temporary URL created for new image previews.
     return () => {
       if (imagePreview && imagePreview.startsWith('blob:')) {
         URL.revokeObjectURL(imagePreview);
       }
-    }
-  }, [initialData]);
+    };
+  }, [initialData, categories]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setValidationError('');
@@ -133,11 +172,18 @@ const ProductForm = ({ onSubmit, onClose, isLoading, error, initialData }: Produ
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="category">Category</label>
-              <select id="category" name="category" value={formData.category} onChange={handleChange} disabled={isLoading}>
-                <option value="Foods">Foods</option>
-                <option value="Beverages">Beverages</option>
-                <option value="Seasonings">Seasonings</option>
-                <option value="Others">Others</option>
+              <select
+                id="category"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                disabled={isLoading}
+              >
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div className={styles.formGroup}>

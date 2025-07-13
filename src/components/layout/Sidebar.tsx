@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faBoxOpen, faUsers, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
+import { faTachometerAlt, faBoxOpen, faFileInvoice, faTag, faUser } from '@fortawesome/free-solid-svg-icons';
 import styles from './Sidebar.module.scss';
 import { useContext } from 'react';
 import { SidebarContext } from '../../context/SidebarContext';
@@ -31,8 +31,12 @@ const Sidebar = () => {
           <FontAwesomeIcon icon={faBoxOpen} />
           <span>Products</span>
         </NavLink>
+        <NavLink to="/categories" className={({ isActive }) => isActive ? styles.activeLink : ''}>
+          <FontAwesomeIcon icon={faTag} />
+          <span>Categories</span>
+        </NavLink>
         <NavLink to="/customers" className={({ isActive }) => isActive ? styles.activeLink : ''}>
-          <FontAwesomeIcon icon={faUsers} />
+          <FontAwesomeIcon icon={faUser} />
           <span>Customers</span>
         </NavLink>
         <NavLink to="/orders" className={({ isActive }) => isActive ? styles.activeLink : ''}>
